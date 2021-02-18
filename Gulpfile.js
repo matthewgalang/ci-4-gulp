@@ -11,11 +11,17 @@ var gulp = require("gulp"),
     glob = require("glob"),
     config = require("./gulp-config"),
     concat = require('gulp-concat'),
-    sourcemaps = require('gulp-sourcemaps');
+    sourcemaps = require('gulp-sourcemaps'),
+    cleanCSS = require('gulp-clean-css');
 
 var isProduction = mode.production();
 const PostCssPlugins = [
     require("postcss-modules")({
+        getJSON: function (cssFileName, json) {
+            var cssName = path.basename(cssFileName, ".css");
+            var jsonFileName = path.resolve('scss/transforms/' + cssName + ".json");
+            fs.writeFileSync(jsonFileName, JSON.stringify(json));
+        },
         generateScopedName: isProduction
             ? "[contenthash:base64:5]m4s"
             : "[name]__[local]___[contenthash:base64:5]",
@@ -31,6 +37,7 @@ gulp.task("sass", function () {
             }).on("error", sass.logError))
         .pipe(postcss(PostCssPlugins))
         .pipe(concat('styles.css'))
+        .pipe(mode.production(cleanCSS()))
         .pipe(mode.development(sourcemaps.write('.')))
         .pipe(mode.production(hash()))
         .pipe(gulp.dest(config.paths.dest.css)) // hashed files output path

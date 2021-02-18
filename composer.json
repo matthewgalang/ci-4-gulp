@@ -1,7 +1,7 @@
 {
-	"name": "codeigniter4/appstarter",
+	"name": "matthewgalang/ci-4-gulp",
 	"type": "project",
-	"description": "CodeIgniter4 starter app",
+	"description": "CodeIgniter4 + CSS Modules through Gulp",
 	"homepage": "https://codeigniter.com",
 	"license": "MIT",
 	"require": {
