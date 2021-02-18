@@ -1,54 +1,66 @@
-# CodeIgniter 4 Application Starter
+# CodeIgniter4 + CSS Modules with Gulp
 
-## What is CodeIgniter?
+A boilerplate to use [CSS Modules](https://github.com/css-modules/css-modules) on [CodeIgniter4](https://github.com/codeigniter4/CodeIgniter4) through [Gulp](https://gulpjs.com/).
 
-CodeIgniter is a PHP full-stack web framework that is light, fast, flexible and secure.
-More information can be found at the [official site](http://codeigniter.com).
+Who would need this? If you have a monolithic MVC project that does not use a javascript framework or other bundler for assets but would like to use CSS Module functionality, then start  here.
 
-This repository holds a composer-installable app starter.
-It has been built from the
-[development repository](https://github.com/codeigniter4/CodeIgniter4).
+## Usage
 
-More information about the plans for version 4 can be found in [the announcement](http://forum.codeigniter.com/thread-62615.html) on the forums.
+### Write modular css
+Out of the box, the gulpfile supports non-partial scss files in the `scss` folder in the project root. You can write css like this:
 
-The user guide corresponding to this version of the framework can be found
-[here](https://codeigniter4.github.io/userguide/).
+```
+// componentOne.scss
+.myClass {
+  color: red;
+}
+```
+```
+// componentTwo.scss
+.myClass {
+  color: blue;
+}
+```
 
-## Installation & updates
+Running gulp will compile and output a css file at `public/assets/css` containing the transformed styles:
 
-`composer create-project codeigniter4/appstarter` then `composer update` whenever
-there is a new release of the framework.
+```
+// publicStyles.css
+.componentOne__myClass {
+  color:red;
+}
+.componentTwo__myClass {
+  color:blue;
+}
+```
 
-When updating, check the release notes to see if there are any changes you might need to apply
-to your `app` folder. The affected files can be copied or merged from
-`vendor/codeigniter4/framework/app`.
+Which you can assign class names in your view by:
 
-## Setup
+```
+// index.php
+<div <?=className('componentOne', ['myClass'])?>>
+  This appears red
+</div>
 
-Copy `env` to `.env` and tailor for your app, specifically the baseURL
-and any database settings.
+<div <?=className('componentTwo', ['myClass'])?>>
+  This appears blue
+</div>
+```
 
-## Important Change with index.php
+### Generate Transforms
 
-`index.php` is no longer in the root of the project! It has been moved inside the *public* folder,
-for better security and separation of components.
+Transforms are saved as JSON objects into the `scss/transforms` folder when running gulp. The CSSModules library will map the correct class name with these transforms.
 
-This means that you should configure your web server to "point" to your project's *public* folder, and
-not to the project root. A better practice would be to configure a virtual host to point there. A poor practice would be to point your web server to the project root and expect to enter *public/...*, as the rest of your logic and the
-framework are exposed.
+### Load public stylesheet
 
-**Please** read the user guide for a better explanation of how CI4 works!
-
-## Repository Management
-
-We use Github issues, in our main repository, to track **BUGS** and to track approved **DEVELOPMENT** work packages.
-We use our [forum](http://forum.codeigniter.com) to provide SUPPORT and to discuss
-FEATURE REQUESTS.
-
-This repository is a "distribution" one, built by our release preparation script.
-Problems with it can be raised on our forum, or as issues in the main repository.
+All transformed classes are concatenated into one sheet in `public/assets/css`. Cachebusting is enabled on production only (make sure you run the correct npm/yarn script).
 
 ## Server Requirements
+
+The project was stable with the following:
+Node.js version 15.5.1
+npm 7.3.0
+yarn 1.22.10
 
 PHP version 7.3 or higher is required, with the following extensions installed:
 
@@ -61,3 +73,12 @@ Additionally, make sure that the following extensions are enabled in your PHP:
 - [mbstring](http://php.net/manual/en/mbstring.installation.php)
 - [mysqlnd](http://php.net/manual/en/mysqlnd.install.php)
 - xml (enabled by default - don't turn it off)
+
+## Installation 
+
+Make sure you have npm + yarn installed then run `yarn` in your project.
+
+## Setup
+
+Copy `env` to `.env` and tailor for your app, specifically the baseURL
+and any database settings.
