@@ -1,6 +1,6 @@
 var paths = {
     src: {
-        scss: 'scss/[^_]*.scss'
+        scss: 'scss/**/[^_]*.scss'
     },
     dest: {
         css: 'public/assets/css/'

@@ -1,3 +1,9 @@
 .myClass {
     color:red;
 }
+
+:global {
+    .globalClass {
+        font-weight:bold;
+    }
+}

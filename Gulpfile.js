@@ -9,7 +9,9 @@ var gulp = require("gulp"),
     del = require("del"),
     fs = require("fs"),
     glob = require("glob"),
-    config = require("./gulp-config");
+    config = require("./gulp-config"),
+    concat = require('gulp-concat'),
+    sourcemaps = require('gulp-sourcemaps');
 
 var isProduction = mode.production();
 const PostCssPlugins = [
@@ -22,24 +24,24 @@ const PostCssPlugins = [
 ].filter(Boolean);
 
 gulp.task("sass", function () {
-    return gulp
-        .src(config.paths.src.scss)
-        .pipe(
-            sass({
+    return gulp.src(config.paths.src.scss)
+        .pipe(mode.development(sourcemaps.init()))
+        .pipe(sass({
                 includePaths: ["node_modules"],
-            }).on("error", sass.logError)
-        )
+            }).on("error", sass.logError))
         .pipe(postcss(PostCssPlugins))
-        .pipe(hash())
+        .pipe(concat('styles.css'))
+        .pipe(mode.development(sourcemaps.write('.')))
+        .pipe(mode.production(hash()))
         .pipe(gulp.dest(config.paths.dest.css)) // hashed files output path
-        .pipe(
+        .pipe(mode.production(
             hash.manifest("scss/manifest.json", {
                 deleteOld: true,
                 sourceDir: config.paths.dest.css, // old hashed files path
                 append: false,
-            })
+            }))
         )
-        .pipe(gulp.dest("."))
+        .pipe(mode.production(gulp.dest(".")))
         .pipe(livereload());
 });
 
@@ -81,6 +83,15 @@ function clean() {
             }
         });
     });
+    if (isProduction) {
+        glob.sync("public/assets/css/styles.+(css|css.map)").forEach((filepath) => {
+            del(filepath);
+        });
+    } else {
+        glob.sync("public/assets/css/styles-*.css").forEach((filepath) => {
+            del(filepath);
+        });
+    }
 }
 
 /**
@@ -103,5 +114,5 @@ gulp.task(
     "default",
     isProduction
         ? gulp.parallel("sass", "clean")
-        : gulp.series("clean", gulp.parallel("sass:watch", "clean:watch"))
+        : gulp.series("clean", "sass", gulp.parallel("sass:watch", "clean:watch"))
 );
