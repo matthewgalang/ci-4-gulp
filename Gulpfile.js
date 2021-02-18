@@ -11,7 +11,8 @@ var gulp = require("gulp"),
     glob = require("glob"),
     config = require("./gulp-config"),
     concat = require('gulp-concat'),
-    sourcemaps = require('gulp-sourcemaps');
+    sourcemaps = require('gulp-sourcemaps'),
+    cleanCSS = require('gulp-clean-css');
 
 var isProduction = mode.production();
 const PostCssPlugins = [
@@ -36,6 +37,7 @@ gulp.task("sass", function () {
             }).on("error", sass.logError))
         .pipe(postcss(PostCssPlugins))
         .pipe(concat('styles.css'))
+        .pipe(mode.production(cleanCSS()))
         .pipe(mode.development(sourcemaps.write('.')))
         .pipe(mode.production(hash()))
         .pipe(gulp.dest(config.paths.dest.css)) // hashed files output path
