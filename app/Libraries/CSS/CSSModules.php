@@ -22,9 +22,13 @@ class CSSModules
    {
       // get styles manifest
       $file_glob = rsearch($this->transformation_path,"/^.*".$file."\.json$/");
-      $json = file_get_contents($file_glob[0]);
-      $classes = json_decode($json);
-
-      return (array) $classes;
+      if(!count($file_glob) > 0) {
+         return [];
+      } else {
+         $json = file_get_contents($file_glob[0]);
+         $classes = json_decode($json);
+   
+         return (array) $classes;
+      }
    }
 }

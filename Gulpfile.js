@@ -59,7 +59,7 @@ logStream = function (file) {
 gulp.task("sass:watch", function () {
     livereload.listen();
     gulp.watch(
-        config.paths.src.scss,
+        'scss/**/*.scss',
         { usePolling: true },
         gulp.series("sass", "clean")
     );
@@ -79,16 +79,11 @@ gulp.task("clean", async function () {
  * Checks all files in scss folder with .css.json extension and deletes it if matching filenames with .scss extension is not found
  */
 function clean() {
-    glob.sync("scss/*.css.json").forEach((filepath) => {
-        scss_file = `${path.dirname(filepath)}/${path.basename(
-            filepath,
-            ".css.json"
-        )}.scss`;
-        fs.access(scss_file, (error) => {
-            if (error) {
-                del(filepath);
-            }
-        });
+    glob.sync("scss/transforms/*.json").forEach((filepath) => {
+        var filename = path.basename(filepath,".json") + '.scss';
+        if(glob.sync("scss/**/"+filename).length < 1) {
+            del(filepath);
+        }
     });
     if (isProduction) {
         glob.sync("public/assets/css/styles.+(css|css.map)").forEach((filepath) => {
@@ -108,10 +103,10 @@ gulp.task("clean:watch", function () {
     gulp.watch(config.paths.src.scss, { usePolling: true }).on(
         "unlink",
         function (filepath) {
-            additionalFile = `${path.dirname(filepath)}/${path.basename(
+            additionalFile = `scss/transforms/${path.basename(
                 filepath,
                 ".scss"
-            )}.css.json`;
+            )}.json`;
             del(additionalFile);
         }
     );
