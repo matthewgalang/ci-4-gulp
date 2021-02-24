@@ -7,7 +7,7 @@ Who would need this? If you have a monolithic MVC project that does not use a ja
 ## Usage
 
 ### Write modular css
-Out of the box, the gulpfile supports non-partial scss files in the `scss` folder in the project root. You can write css like this:
+Out of the box, the gulpfile supports non-partial scss files in the `scss` folder in the project root. You can write scss like this:
 
 ```
 // componentOne.scss
